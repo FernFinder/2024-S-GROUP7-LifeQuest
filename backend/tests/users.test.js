@@ -32,10 +32,11 @@ afterAll(async () => {
 /* ChatGPT4 assistance >> */
 
 // test user creation
-describe("POST /users", () => {
+// this test has been slightly modified as this API call is now under th login.js route - Fernando
+describe("POST /login/create", () => {
   it("should create a new user", async () => {
     // post request to create a new user
-    const response = await request(app).post("/users").send(newUser);
+    const response = await request(app).post("/login/create").send(newUser);
     // check if correct user in reponse
     expect(response.statusCode).toBe(201);
     expect(response.body.email).toBe(newUser.email);

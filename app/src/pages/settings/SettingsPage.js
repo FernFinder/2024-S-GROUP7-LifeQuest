@@ -10,34 +10,76 @@ const SettingsPage = () => {
   const { fontSize, increaseFontSize, decreaseFontSize, resetFontSize, darkMode, toggleDarkMode } = useFontSize();
   const [showDeleteAccountPopup, setShowDeleteAccountPopup] = useState(false);
 
-  //THIS IS JUST A TEST FUNCTION, PLEASE FEEL FREE TO MODIFY IT TO ACTUALLY BE A DELETE REQUEST
+  async function handleLogoutClick(){
+
+    //PUT new cookie value to logout
+    const putResponse = await axios.put("/login/logout", {}, { withCredentials: true })
+    .then(function (response){
+      //handle success
+      console.log(response);
+      window.location.href = '/';
+    })
+    .catch(function (error) {
+      // handle error
+      if (error.response.status == 401){
+        //unauthorized users get booted back to login
+        window.location.href = '/'
+      }
+      console.log(response);
+    }) 
+
+  };
 
   async function handleDeleteAccountClick() {
 
-    setShowDeleteAccountPopup(true);
+    //Get rid of account deletion popup
+    setShowDeleteAccountPopup(false);
 
-    try{
-      //Our back end address
-      axios.defaults.baseURL = 'http://localhost:9000';
+    //Our back end address
+    axios.defaults.baseURL = 'http://localhost:9000';
 
-      //The POST request
-      const response = await axios.post('/settings/test', {}, { withCredentials: true })
-      .then(function (response) {
-          //handle success
-          console.log(response);
-      })
-      .catch(function (error) {
-          // handle error
-          if (error.response.status == 401){
-            //unauthorized users get booted back to login
-            window.location.href = '/'
-          }
-          console.log(error);
-      })
-    }
-    catch(foo){
-        console.log(foo);
-    }
+    var email;
+    
+    //GET the current user
+    await axios.get('/users/me', { withCredentials: true })
+    .then(function (response) {
+        // handle success
+        console.log(response);
+        email = response.data.email;
+    })
+    .catch(function (error) {
+        // handle error
+        console.log(error);
+        if (error.response.status == 401){
+          //unauthorized users get booted back to login
+          window.location.href = '/'
+        }
+    })
+
+    //DELETE the current user
+    await axios.delete(`/users/${email}`, { withCredentials: true })
+    .then(function (response){
+      //handle success
+      console.log(response)
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(response);
+    })
+
+    //PUT new cookie value to logout
+    const putResponse = await axios.put("/login/logout", {}, { withCredentials: true })
+    .then(function (response){
+      //handle success
+      console.log(response);
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(response);
+    }) 
+
+    window.location.href = '/';
+
   };
 
   return (
@@ -78,9 +120,9 @@ const SettingsPage = () => {
 		</button>
 	  </div>
 	  <div className={styles.resetQuizButtonContainer}>
-	    <button onClick={() => {}} className={styles.resetQuizButton}>
+      <button onClick={() => {window.location.href = '/quiz';}} className={styles.resetQuizButton}>
 		  Retake Quiz
-		</button>
+		  </button>
 	  </div>
 	  <div className={styles.logoutButtonContainer}>
 	    <button onClick={() => {}} className={styles.logoutButton}>
@@ -88,14 +130,14 @@ const SettingsPage = () => {
 		</button>
 	  </div>
 	  <div className={styles.deleteAccountButtonContainer}>
-	    <button onClick={handleDeleteAccountClick} className={styles.deleteAccountButton}>
+	    <button onClick={() => setShowDeleteAccountPopup(true)} className={styles.deleteAccountButton}>
 		  Delete Account
 		</button>
 		{showDeleteAccountPopup && (
           <div className={styles.deleteAccountButtonpopup} data-testid="delete-account-popup">
             <p>Are you sure you want to delete your account?</p>
             <button onClick={() => setShowDeleteAccountPopup(false)}>Cancel</button>
-            <button onClick={() => setShowDeleteAccountPopup(false)}>Confirm</button>
+            <button onClick={handleDeleteAccountClick}>Confirm</button>
           </div>
         )}
 	  </div>

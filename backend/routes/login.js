@@ -45,4 +45,39 @@ router.post('/submit', async (req, res, next) => {
     }
 })
 
+router.put('/logout', async (req, res, next) => {
+    
+    try{
+        res.cookie("login", "", {
+            withCredentials: true, //Required for cookies.
+            httpOnly: false,
+        });
+        res.status(200).json({ message: "Signed out successfully"});
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+})
+
+// POST /users request to create a new user
+router.post('/create', async (req, res, next) => {
+    try {
+      // create new user from request
+      const newUser = new User(req.body);
+      // check if user exists in database
+      const { email } = req.body;
+      const duplicateCheck = await User.findOne({ email });
+      if(duplicateCheck){
+        return res.status(409).json({ message: "Conflict: User already exists"});
+      }
+      // save new user
+      await newUser.save();
+      // send back 201 and the new user
+      res.status(201).json(newUser);
+    } catch (error) {
+      // send back 400 and error message
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+
 module.exports = router;

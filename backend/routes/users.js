@@ -1,29 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
-const bcrypt = require("bcryptjs");
-const { createJWT } = require("../util/jwt.js");
-
-// POST /users request to create a new user
-router.post('/', async (req, res, next) => {
-  try {
-    // create new user from request
-    const newUser = new User(req.body);
-    // check if user exists in database
-    const { email } = req.body;
-    const duplicateCheck = await User.findOne({ email });
-    if(duplicateCheck){
-      return res.status(409).json({ message: "Conflict: User already exists"});
-    }
-    // save new user
-    await newUser.save();
-    // send back 201 and the new user
-    res.status(201).json(newUser);
-  } catch (error) {
-    // send back 400 and error message
-    res.status(400).json({ message: error.message });
-  }
-});
 
 // GET /users/me - retrieve logged in user
 router.get('/me', async (req, res, next) => {
@@ -36,7 +13,7 @@ router.get('/me', async (req, res, next) => {
       return res.status(404).json({ message: 'User not found' });
     }
     // send back the user
-    res.json(user);
+    res.status(200).json(user);
   } catch (error) {
     // send back 500 and error message
     res.status(500).json({ message: error.message });
