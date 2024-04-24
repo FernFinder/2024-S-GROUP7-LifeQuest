@@ -75,7 +75,7 @@ router.post('/create', async (req, res, next) => {
       res.status(201).json(newUser);
     } catch (error) {
       // send back 400 and error message
-      res.status(400).json({ message: error.message });
+      res.status(500).json({ message: error.message });
     }
   });
 

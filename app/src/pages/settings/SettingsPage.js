@@ -72,13 +72,13 @@ const SettingsPage = () => {
     .then(function (response){
       //handle success
       console.log(response);
+      window.location.href = '/';
     })
     .catch(function (error) {
       // handle error
       console.log(response);
+      window.location.href = '/';
     }) 
-
-    window.location.href = '/';
 
   };
 
@@ -125,7 +125,7 @@ const SettingsPage = () => {
 		  </button>
 	  </div>
 	  <div className={styles.logoutButtonContainer}>
-	    <button onClick={() => {}} className={styles.logoutButton}>
+	    <button onClick={handleLogoutClick} className={styles.logoutButton}>
 		  Logout
 		</button>
 	  </div>

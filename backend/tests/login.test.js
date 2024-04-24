@@ -28,7 +28,6 @@ afterAll(async () => {
   mongoose.disconnect();
 });
 
-// test user creation
 describe("POST /login/submit", () => {
   it("it should not find a user", async () => {
     // Check a user email that is not in database
@@ -75,5 +74,36 @@ describe("POST /login/submit", () => {
 
     //Restore findOne function
     user.findOne.restore();
+  });
+});
+
+describe("POST /login/create", () => {
+  it("it should not create a duplicate user", async () => {
+    newUser.email = 'backendtesting3927492130@test.net';
+    newUser.password = 'password';
+    const response = await request(app).post("/login/create").send(newUser);
+
+    expect(response.statusCode).toBe(409);
+  });
+  it("it should throw an error", async () => {
+      // Stub the findOne function to throw an error
+      sinon.stub(user , 'findOne')
+      .throws(new Error('Test error'));
+  
+      const response = await request(app).post("/login/create").send(newUser);
+      // check if error is caught
+      expect(response.statusCode).toBe(500);
+  
+      //Restore findOne function
+      user.findOne.restore();
+  });
+});
+
+describe("PUT /login/logout", () => {
+  it("it should logout a user", async () => {
+    const response = await request(app).put("/login/logout");
+
+    expect(response.statusCode).toBe(200);
+
   });
 });
