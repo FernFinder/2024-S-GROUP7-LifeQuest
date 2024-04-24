@@ -52,14 +52,16 @@ router.post('/submit', async (req, res, next) => {
 })
 
 router.put('/logout', async (req, res, next) => {
-    
+    //To logout we need to revoke the token. Code here removes the value from the token.
     try{
         res.cookie("login", "", {
             withCredentials: true, //Required for cookies.
             httpOnly: false,
         });
+        //Successful log out
         res.status(200).json({ message: "Signed out successfully"});
     } catch (error) {
+        //Error, something went wrong
         res.status(500).json({ message: error.message });
     }
 })
@@ -84,6 +86,5 @@ router.post('/create', async (req, res, next) => {
       res.status(500).json({ message: error.message });
     }
   });
-
 
 module.exports = router;
