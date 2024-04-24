@@ -12,7 +12,6 @@ require('dotenv').config();
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var loginRouter = require('./routes/login');
-var settingsRouter = require('./routes/settings');
 const { userVerification} = require("./middleware/auth.js");
 
 var app = express();
